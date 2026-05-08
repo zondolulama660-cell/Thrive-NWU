@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thrive@NWU — Contact & Support</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple-deep:   #3b1d6e;
+      --purple-mid:    #6a35b8;
+      --purple-light:  #9d6fe8;
+      --purple-pale:   #ede5ff;
+      --gold:          #f5c842;
+      --gold-dark:     #c89f00;
+      --white:         #faf8ff;
+      --ink:           #1a0f2e;
+      --muted:         #7a6e90;
+      --success:       #1e8c6e;
+      --success-bg:    #d6f5ee;
+      --error:         #c0253a;
+      --error-bg:      #fde8eb;
+      --radius:        14px;
+      --shadow:        0 8px 40px rgba(59,29,110,0.18);
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--purple-deep);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Background decoration */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(106,53,184,0.35) 0%, transparent 70%);
+      top: -200px; right: -200px;
+    }
+    body::after {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(245,200,66,0.12) 0%, transparent 70%);
+      bottom: -100px; left: -100px;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: var(--white);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: var(--shadow), 0 2px 0 var(--gold) inset;
+      overflow: hidden;
+    }
+
+    /* Card top banner */
+    .card-header {
+      background: linear-gradient(135deg, var(--purple-mid), var(--purple-deep));
+      padding: 36px 40px 32px;
+      position: relative;
+    }
+    .card-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 24px;
+      background: var(--white);
+      border-radius: 24px 24px 0 0;
+    }
+    .card-header .badge {
+      display: inline-block;
+      background: rgba(245,200,66,0.18);
+      border: 1px solid rgba(245,200,66,0.5);
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 14px;
+    }
+    .card-header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 30px;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .card-header h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .card-header p {
+      color: rgba(255,255,255,0.65);
+      font-size: 14px;
+      margin-top: 8px;
+      font-weight: 300;
+    }
+
+    /* Form body */
+    .card-body { padding: 10px 40px 40px; }
+
+    /* Global notification */
+    .form-notification {
+      display: none;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .form-notification.error {
+      background: var(--error-bg);
+      border-left: 4px solid var(--error);
+      color: #7a0016;
+    }
+    .form-notification.success {
+      background: var(--success-bg);
+      border-left: 4px solid var(--success);
+      color: #0d5440;
+    }
+    .form-notification.visible { display: block; animation: slideDown 0.3s ease; }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Field groups */
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: 0.3px;
+      margin-bottom: 7px;
+    }
+    .field label .req {
+      color: var(--error);
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap .icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      pointer-events: none;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    textarea + .char-count { position: unset; }
+
+    .input-wrap input,
+    .input-wrap textarea,
+    .input-wrap select {
+      width: 100%;
+      padding: 12px 42px 12px 42px;
+      border: 2px solid #e2daf0;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      color: var(--ink);
+      background: #fdfbff;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .input-wrap select { cursor: pointer; }
+    .input-wrap textarea {
+      resize: vertical;
+      min-height: 110px;
+      padding-top: 14px;
+      padding-bottom: 14px;
+      line-height: 1.6;
+    }
+    /* Textarea icon is top-aligned */
+    .field.area .icon { top: 16px; transform: none; }
+    .field.area .status-icon { top: 16px; transform: none; }
+
+    .input-wrap input:focus,
+    .input-wrap textarea:focus,
+    .input-wrap select:focus {
+      border-color: var(--purple-mid);
+      box-shadow: 0 0 0 4px rgba(106,53,184,0.12);
+      background: #fff;
+    }
+    .input-wrap input:focus ~ .icon,
+    .input-wrap textarea:focus ~ .icon {
+      color: var(--purple-mid);
+    }
+
+    /* Valid / invalid states */
+    .field.valid .input-wrap input,
+    .field.valid .input-wrap textarea,
+    .field.valid .input-wrap select {
+      border-color: var(--success);
+      background: #f6fefc;
+    }
+    .field.invalid .input-wrap input,
+    .field.invalid .input-wrap textarea,
+    .field.invalid .input-wrap select {
+      border-color: var(--error);
+      background: #fff8f9;
+    }
+    .field.invalid .input-wrap input:focus,
+    .field.invalid .input-wrap textarea:focus {
+      box-shadow: 0 0 0 4px rgba(192,37,58,0.1);
+    }
+
+    /* Status icon (✓ / ✗) */
+    .status-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      display: none;
+      pointer-events: none;
+    }
+    .field.valid  .status-icon { display: block; color: var(--success); }
+    .field.invalid .status-icon { display: block; color: var(--error); }
+
+    /* Inline error message */
+    .error-msg {
+      font-size: 12.5px;
+      color: var(--error);
+      margin-top: 6px;
+      display: none;
+      padding-left: 2px;
+      animation: slideDown 0.2s ease;
+    }
+    .field.invalid .error-msg { display: block; }
+
+    /* Character counter */
+    .char-count {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 5px;
+      transition: color 0.2s;
+    }
+    .char-count.warn { color: var(--gold-dark); }
+    .char-count.over { color: var(--error); font-weight: 600; }
+
+    /* Row layout for two-column fields */
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid #ece8f5;
+      margin: 28px 0 24px;
+    }
+
+    /* Submit button */
+    .btn-submit {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--purple-light), var(--purple-mid));
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      box-shadow: 0 4px 18px rgba(106,53,184,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(106,53,184,0.45);
+    }
+    .btn-submit:active:not(:disabled) { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; }
+
+    /* Spinner */
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Success state */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 20px 0 10px;
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .success-screen .checkmark {
+      width: 72px; height: 72px;
+      background: var(--success-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      margin: 0 auto 20px;
+      animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
+    }
+    @keyframes pop {
+      from { transform: scale(0); }
+      to   { transform: scale(1); }
+    }
+    .success-screen h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .success-screen p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      max-width: 340px;
+      margin: 0 auto 24px;
+    }
+    .btn-reset {
+      background: transparent;
+      border: 2px solid var(--purple-mid);
+      color: var(--purple-mid);
+      border-radius: var(--radius);
+      padding: 10px 24px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-reset:hover { background: var(--purple-mid); color: #fff; }
+
+    /* Progress bar */
+    .progress-bar {
+      height: 3px;
+      background: #e8e0f5;
+      border-radius: 100px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple-light), var(--gold));
+      border-radius: 100px;
+      width: 0%;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Field count hint */
+    .field-hint {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: right;
+      margin-bottom: 20px;
+      margin-top: -10px;
+    }
+
+    /* Password strength */
+    .strength-bar {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .strength-bar span {
+      flex: 1;
+      height: 4px;
+      background: #e2daf0;
+      border-radius: 100px;
+      transition: background 0.3s;
+    }
+    .strength-label {
+      font-size: 12px;
+      margin-top: 5px;
+      font-weight: 600;
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="badge">✦ Thrive@NWU</div>
+      <h1>Student <em>Support</em> Form</h1>
+      <p>Fill in your details and a counsellor will get back to you.</p>
+    </div>
+
+```
+<div class="card-body">
+
+  <!-- Progress bar -->
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <p class="field-hint"><span id="completedCount">0</span> of <span id="totalCount">7</span> fields completed</p>
+
+  <!-- Global notification -->
+  <div class="form-notification" id="formNotification"></div>
+
+  <!-- ── FORM ── -->
+  <form id="contactForm" novalidate>
+
+    <!-- Row: First + Last name -->
+    <div class="row">
+      <div class="field" id="field-firstName">
+        <label>First Name <span class="req">*</span></label>
+        <div class="input-wrap">
+          <input type="text" id="firstName" placeholder="e.g. Amara" autocomplete="given-name">
+          <span class="icon">👤</span>
+          <span class="status-icon" id="si-firstName"></span>
+        </div>
+        <span class="error-msg" id="err-firstName"></span>
+      </div>
+
+      <div class="field" id="field-lastName">
+        <label>Last Name <span class="req">*</span></label>
+        <div class="input-wrap">
+          <input type="text" id="lastName" placeholder="e.g. Dlamini" autocomplete="family-name">
+          <span class="icon">👤</span>
+          <span class="status-icon" id="si-lastName"></span>
+        </div>
+        <span class="error-msg" id="err-lastName"></span>
+      </div>
+    </div>
+
+    <!-- Student number -->
+    <div class="field" id="field-studentNo">
+      <label>Student Number <span class="req">*</span></label>
+      <div class="input-wrap">
+        <input type="text" id="studentNo" placeholder="e.g. 12345678" maxlength="8" autocomplete="off">
+        <span class="icon">🎓</span>
+        <span class="status-icon" id="si-studentNo"></span>
+      </div>
+      <span class="error-msg" id="err-studentNo"></span>
+    </div>
+
+    <!-- Email -->
+    <div class="field" id="field-email">
+      <label>Student Email <span class="req">*</span></label>
+      <div class="input-wrap">
+        <input type="email" id="email" placeholder="you@students.nwu.ac.za" autocomplete="email">
+        <span class="icon">✉️</span>
+        <span class="status-icon" id="si-email"></span>
+      </div>
+      <span class="error-msg" id="err-email"></span>
+    </div>
+
+    <!-- Support type -->
+    <div class="field" id="field-supportType">
+      <label>Type of Support Needed <span class="req">*</span></label>
+      <div class="input-wrap">
+        <select id="supportType">
+          <option value="">— Select a category —</option>
+          <option value="mental">Mental Health & Counselling</option>
+          <option value="academic">Academic Stress & Burnout</option>
+          <option value="financial">Financial Difficulty</option>
+          <option value="social">Social / Relationship Issues</option>
+          <option value="emergency">Emergency Assistance</option>
+          <option value="other">Other</option>
+        </select>
+        <span class="icon">🩺</span>
+        <span class="status-icon" id="si-supportType"></span>
+      </div>
+      <span class="error-msg" id="err-supportType"></span>
+    </div>
+
+    <!-- Phone (optional) -->
+    <div class="field" id="field-phone">
+      <label>Phone Number <span style="color:var(--muted);font-weight:400;font-size:12px">(optional)</span></label>
+      <div class="input-wrap">
+        <input type="tel" id="phone" placeholder="e.g. 082 123 4567" autocomplete="tel">
+        <span class="icon">📞</span>
+        <span class="status-icon" id="si-phone"></span>
+      </div>
+      <span class="error-msg" id="err-phone"></span>
+    </div>
+
+    <!-- Message -->
+    <div class="field area" id="field-message">
+      <label>Your Message <span class="req">*</span></label>
+      <div class="input-wrap">
+        <textarea id="message" placeholder="Briefly describe what you're going through or what you need help with…" maxlength="500"></textarea>
+        <span class="icon">💬</span>
+        <span class="status-icon" id="si-message"></span>
+      </div>
+      <div class="char-count" id="charCount">0 / 500</div>
+      <span class="error-msg" id="err-message"></span>
+    </div>
+
+    <hr class="divider">
+
+    <button type="submit" class="btn-submit" id="submitBtn">
+      <span id="btnText">Send Message</span>
+      <span id="btnSpinner" class="spinner"></span>
+    </button>
+
+  </form>
+
+  <!-- Success screen (hidden by default) -->
+  <div class="success-screen" id="successScreen">
+    <div class="checkmark">✅</div>
+    <h2>Message Received</h2>
+    <p>Thank you! A Thrive@NWU counsellor will contact you within <strong>1–2 business days</strong>. If this is urgent, please call <strong>018 299 1111</strong>.</p>
+    <button class="btn-reset" id="resetBtn">Submit another request</button>
+  </div>
+
+</div>
+```
+
+  </div>
+
+  <script>
+  (function () {
+
+    /* ── Config ───────────────────────────────────── */
+    const FIELDS = [
+      {
+        id: 'firstName',
+        label: 'First name',
+        required: true,
+        validate(v) {
+          if (!v) return 'First name is required.';
+          if (v.trim().length < 2) return 'Must be at least 2 characters.';
+          if (!/^[a-zA-Z\s\-']+$/.test(v)) return 'Letters only, please.';
+          return null;
+        }
+      },
+      {
+        id: 'lastName',
+        label: 'Last name',
+        required: true,
+        validate(v) {
+          if (!v) return 'Last name is required.';
+          if (v.trim().length < 2) return 'Must be at least 2 characters.';
+          if (!/^[a-zA-Z\s\-']+$/.test(v)) return 'Letters only, please.';
+          return null;
+        }
+      },
+      {
+        id: 'studentNo',
+        label: 'Student number',
+        required: true,
+        validate(v) {
+          if (!v) return 'Student number is required.';
+          if (!/^\d{8}$/.test(v.trim())) return 'Must be exactly 8 digits.';
+          return null;
+        }
+      },
+      {
+        id: 'email',
+        label: 'Email',
+        required: true,
+        validate(v) {
+          if (!v) return 'Email address is required.';
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())) return 'Please enter a valid email.';
+          return null;
+        }
+      },
+      {
+        id: 'supportType',
+        label: 'Support type',
+        required: true,
+        validate(v) {
+          if (!v) return 'Please select a support type.';
+          return null;
+        }
+      },
+      {
+        id: 'phone',
+        label: 'Phone',
+        required: false,
+        validate(v) {
+          if (!v) return null; // optional
+          const digits = v.replace(/\D/g, '');
+          if (digits.length < 10 || digits.length > 11) return 'Enter a valid SA phone number.';
+          return null;
+        }
+      },
+      {
+        id: 'message',
+        label: 'Message',
+        required: true,
+        validate(v) {
+          if (!v) return 'A message is required.';
+          if (v.trim().length < 20) return `Too short — at least 20 characters (${v.trim().length}/20).`;
+          return null;
+        }
+      },
+    ];
+
+    const REQUIRED_COUNT = FIELDS.filter(f => f.required).length;
+    const totalEl = document.getElementById('totalCount');
+    totalEl.textContent = REQUIRED_COUNT;
+
+    /* ── Helpers ──────────────────────────────────── */
+    function getEl(id) { return document.getElementById(id); }
+
+    function setFieldState(id, state, msg) {
+      // state: 'valid' | 'invalid' | 'neutral'
+      const fieldEl = getEl('field-' + id);
+      const siEl    = getEl('si-' + id);
+      const errEl   = getEl('err-' + id);
+
+      fieldEl.classList.remove('valid', 'invalid');
+      if (state === 'valid')   { fieldEl.classList.add('valid');   siEl.textContent = '✓'; }
+      if (state === 'invalid') { fieldEl.classList.add('invalid'); siEl.textContent = '✕'; }
+
+      errEl.textContent = msg || '';
+    }
+
+    function validateField(cfg) {
+      const el  = getEl(cfg.id);
+      const val = el ? el.value : '';
+      const err = cfg.validate(val.trim());
+
+      if (!val.trim() && !cfg.required) {
+        setFieldState(cfg.id, 'neutral', null);
+        return true; // optional + empty = fine
+      }
+
+      if (err) {
+        setFieldState(cfg.id, 'invalid', err);
+        return false;
+      }
+
+      setFieldState(cfg.id, 'valid', null);
+      return true;
+    }
+
+    /* ── Progress bar ─────────────────────────────── */
+    function updateProgress() {
+      let completed = 0;
+      FIELDS.filter(f => f.required).forEach(function (cfg) {
+        const el  = getEl(cfg.id);
+        const val = el ? el.value.trim() : '';
+        if (val && !cfg.validate(val)) completed++;
+      });
+
+      const pct = (completed / REQUIRED_COUNT) * 100;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('completedCount').textContent = completed;
+    }
+
+    /* ── Character counter ────────────────────────── */
+    const msgEl       = getEl('message');
+    const charCountEl = getEl('charCount');
+    const MAX_CHARS   = 500;
+
+    msgEl.addEventListener('input', function () {
+      const len = msgEl.value.length;
+      charCountEl.textContent = len + ' / ' + MAX_CHARS;
+      charCountEl.className = 'char-count' +
+        (len > MAX_CHARS * 0.9 && len < MAX_CHARS ? ' warn' : '') +
+        (len >= MAX_CHARS ? ' over' : '');
+      updateProgress();
+    });
+
+    /* ── Live validation (blur + input) ──────────── */
+    FIELDS.forEach(function (cfg) {
+      const el = getEl(cfg.id);
+      if (!el) return;
+
+      el.addEventListener('blur', function () {
+        validateField(cfg);
+        updateProgress();
+      });
+
+      el.addEventListener('input', function () {
+        // Only re-validate if already marked invalid (eager correction)
+        const fieldEl = getEl('field-' + cfg.id);
+        if (fieldEl.classList.contains('invalid')) {
+          validateField(cfg);
+        }
+        updateProgress();
+      });
+    });
+
+    /* ── Student number: digits-only filter ───────── */
+    getEl('studentNo').addEventListener('keypress', function (e) {
+      if (!/[0-9]/.test(e.key)) e.preventDefault();
+    });
+
+    /* ── Notification ─────────────────────────────── */
+    function showNotification(type, html) {
+      const n = getEl('formNotification');
+      n.className = 'form-notification ' + type + ' visible';
+      n.innerHTML = html;
+      n.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    function hideNotification() {
+      const n = getEl('formNotification');
+      n.className = 'form-notification';
+    }
+
+    /* ── Submit ───────────────────────────────────── */
+    getEl('contactForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      hideNotification();
+
+      // Validate all fields
+      let allValid = true;
+      let firstInvalid = null;
+
+      FIELDS.forEach(function (cfg) {
+        const ok = validateField(cfg);
+        if (!ok) {
+          allValid = false;
+          if (!firstInvalid) firstInvalid = getEl(cfg.id);
+        }
+      });
+
+      if (!allValid) {
+        showNotification('error',
+          '⚠️ <strong>Please fix the highlighted fields above</strong> before sending.');
+        if (firstInvalid) firstInvalid.focus();
+        return;
+      }
+
+      // Simulate sending
+      const btn     = getEl('submitBtn');
+      const btnText = getEl('btnText');
+      const spinner = getEl('btnSpinner');
+
+      btn.disabled         = true;
+      btnText.textContent  = 'Sending…';
+      spinner.style.display = 'block';
+
+      setTimeout(function () {
+        getEl('contactForm').style.display = 'none';
+        getEl('successScreen').style.display = 'block';
+      }, 1400);
+    });
+
+    /* ── Reset ────────────────────────────────────── */
+    getEl('resetBtn').addEventListener('click', function () {
+      getEl('contactForm').reset();
+      getEl('contactForm').style.display = 'block';
+      getEl('successScreen').style.display = 'none';
+
+      // Clear all field states
+      FIELDS.forEach(function (cfg) { setFieldState(cfg.id, 'neutral', null); });
+
+      // Reset button
+      const btn    = getEl('submitBtn');
+      btn.disabled = false;
+      getEl('btnText').textContent = 'Send Message';
+      getEl('btnSpinner').style.display = 'none';
+
+      charCountEl.textContent = '0 / ' + MAX_CHARS;
+      charCountEl.className = 'char-count';
+      hideNotification();
+      updateProgress();
+    });
+
+    // Initial progress
+    updateProgress();
+
+  })();
+  </script>
+
+</body>
+</html>
